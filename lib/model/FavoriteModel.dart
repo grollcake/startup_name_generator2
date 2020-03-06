@@ -18,7 +18,5 @@ class FavoriteModel with ChangeNotifier {
     return _saved.contains(name);
   }
 
-  int getCount() {
-    _saved.length;
-  }
+  int get count => _saved.length;
 }

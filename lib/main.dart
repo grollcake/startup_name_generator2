@@ -1,4 +1,3 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:startup_name_generator2/model/FavoriteModel.dart';
@@ -11,6 +10,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (BuildContext context) => FavoriteModel()),
@@ -77,22 +77,27 @@ class Tab1Page extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('생성 갯수: ${_namesModel.getCount()}'),
-              Text('선택 갯수: ${_favoriteModel.getCount() ?? 0}'),
+              StreamBuilder<int>(
+                stream: _namesModel.stream,
+                builder: (context, snapshot) {
+                  print('New stream event received. data is ${snapshot.data}');
+                  return Text('생성 갯수: ${snapshot.data ?? 0}');
+                }
+              ),
+              Text('선택 갯수: ${_favoriteModel.count}'),
             ],
           ),
         ),
         SizedBox(height: 10.0),
         Expanded(
-          child: ListView.builder(
+          child: ListView.separated(
               padding: EdgeInsets.all(10.0),
+              itemCount: 100,
+              separatorBuilder: (BuildContext context, int index) => Divider(),
               itemBuilder: (BuildContext context, int index) {
-                if (index.isOdd) return Divider();
-
-                var no = index ~/ 2;
-                var name = _namesModel.getName(no);
-
-                return _buildItem(no, name, context);
+                print('itemBuilder: index = $index');
+                var name = _namesModel.getName(index);
+                return _buildItem(index, name, context);
               }),
         ),
       ],
